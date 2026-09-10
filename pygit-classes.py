@@ -28,13 +28,33 @@ class Branch:
         self.pointer = diff
 
 
+
 class CommitDAG:
     master: Diff | None
     branches: list[Diff]
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.master = None
         self.branches = list()
 
-    def new_branch(self):
+    def new_branch(self) -> None:
         pass
+
+    def add_commit(self, diff: Diff) -> None:
+        if not diff:
+            raise ValueError("Diff must not be None")
+
+        
+
+class DAGPrinter:
+    commit_dag: CommitDAG
+
+    def __init__(self, commit_dag: CommitDAG) -> None:
+        self.commit_dag = commit_dag
+
+    def print_dag(self) -> None:
+        # For now only a list for I am tired son.
+
+        dag = self.commit_dag
+        for diff in dag:
+            pass
