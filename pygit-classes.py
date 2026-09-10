@@ -12,7 +12,7 @@ class Diff:
         if not parents:
             raise ValueError("Diff must have parents")
         
-        self.content = content
+        self.content = content.strip().lower[0] # Let us for now just take the first letter.
         self.parents = parents 
 
 
@@ -31,20 +31,45 @@ class Branch:
 
 class CommitDAG:
     master: Diff | None
-    branches: list[Diff]
+    branches: dict[Diff]
 
     def __init__(self) -> None:
         self.master = None
-        self.branches = list()
+        self.branches = dict()
 
-    def new_branch(self) -> None:
-        pass
+    def new_branch(self, branch_name: str, head: Diff) -> None:
+        if not branch_name:
+            raise ValueError("Branch must not be None")
 
-    def add_commit(self, diff: Diff) -> None:
+        if not head:
+            raise ValueError("HEAD points to null")
+
+        diff = head
+        branch = Branch(branch_name, diff)
+
+        self.branches[branch_name] = branch
+
+    def add_commit(self, diff: Diff, branch_name: str, head: Diff) -> None:
         if not diff:
             raise ValueError("Diff must not be None")
 
-        
+        if not branch_name:
+            raise ValueError("Branch must not be None")
+
+        branch_name = branch_name.lower().strip()
+        branch = self.branches[branch_name]
+        if not branch.get():
+            raise Exception("There is no branch as")
+
+        if branch.pointer != head:
+            raise Exception("HEAD is DETACHED from branches. Not available for now.")
+
+        # When commit is added, branch updates its pointer.
+        diff.parents.append(branch.pointer)
+        branch.pointer = diff
+
+
+
 
 class DAGPrinter:
     commit_dag: CommitDAG
